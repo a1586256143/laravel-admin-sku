@@ -1,14 +1,14 @@
 {
-    "name": "fingerqin/sku",
+    "name": "laravel-admin-ext/sku",
     "description": "",
     "type": "library",
     "keywords": ["laravel-admin", "extension"],
-    "homepage": "https://github.com/fingerQin/sku",
+    "homepage": "https://github.com/a1586256143/laravel-admin-sku",
     "license": "MIT",
     "authors": [
         {
-            "name": "fingerQin",
-            "email": "753814253@qq.com"
+            "name": "a1586256143",
+            "email": "amcolin@126.com"
         }
     ],
     "require": {
@@ -20,13 +20,13 @@
     },
     "autoload": {
         "psr-4": {
-            "FingerQin\\Sku\\": "src/"
+            "Skus\\Sku\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "FingerQin\\Sku\\SkuServiceProvider"
+                "Skus\\Sku\\SkuServiceProvider"
             ]
         }
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace FingerQin\Sku\Http\Controllers;
+namespace Skus\Sku\Http\Controllers;
 
 use Encore\Admin\Layout\Content;
 use Illuminate\Routing\Controller;

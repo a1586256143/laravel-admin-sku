@@ -5,14 +5,14 @@ laravel-admin extension 商品 SKU
 
 ## 安装
 ```bash
-composer require fingerqin/sku
-php artisan vendor:publish --provider="FingerQin\Sku\SkuServiceProvider"
+composer require laravel-admin-ext/sku
+php artisan vendor:publish --provider="Skus\Sku\SkuServiceProvider"
 ```
 
 ## 配置
 
 ### 配置sku上传地址
-文件路径【public/vendor/fingerqin/sku/sku.js】
+文件路径【public/vendor/Skus/sku/sku.js】
 ```javascript
 const UploadHost = '/admin/upload_file';
 ```
@@ -80,7 +80,7 @@ $form->saving(function($form) {
 
 
 
-该扩展从 `https://github.com/jade-kun/sku` 基本上修改。感谢原作者的付出。由于原作者不再维护，以及原扩展只支持多规格，不支持单规格。所以，我在此基本上做了优化。同时支持单规格与多规格的修改。
+该扩展从 `https://github.com/fingerqin/sku` 基本上修改。感谢原作者的付出。由于原作者不再维护，以及原扩展只支持多规格，不支持单规格。所以，我在此基本上做了优化。同时支持单规格与多规格的修改。
 
 
 

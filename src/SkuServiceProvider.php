@@ -1,6 +1,6 @@
 <?php
 
-namespace FingerQin\Sku;
+namespace Skus\Sku;
 
 use Encore\Admin\Admin;
 use Encore\Admin\Form;
