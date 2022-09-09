@@ -5,7 +5,7 @@ laravel-admin extension 商品 SKU
 
 ## 安装
 ```bash
-composer require laravel-admin-ext/sku
+composer require skus/sku
 php artisan vendor:publish --provider="Skus\Sku\SkuServiceProvider"
 ```
 
