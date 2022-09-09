@@ -23,7 +23,7 @@ class SkuServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole() && $assets = $extension->assets()) {
             $this->publishes(
-                [$assets => public_path('vendor/fingerqin/sku')],
+                [$assets => public_path('vendor/skus/sku')],
                 'sku'
             );
         }
