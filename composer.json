@@ -1,5 +1,5 @@
 {
-    "name": "laravel-admin-ext/sku",
+    "name": "skus/sku",
     "description": "",
     "type": "library",
     "keywords": ["laravel-admin", "extension"],
