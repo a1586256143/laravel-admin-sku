@@ -298,5 +298,5 @@
         _this.warp.find('.Js_sku_input').val(JSON.stringify(sku_json));
     };
 
-    window.FingerQinSKU = SKU;
+    window.SkusQinSKU = SKU;
 })();

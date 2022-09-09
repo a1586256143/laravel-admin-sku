@@ -9,18 +9,18 @@ class SkuField extends Field
     protected $view = 'sku::sku_field';
 
     protected static $js = [
-        'vendor/fingerqin/sku/sku.js'
+        'vendor/skus/sku/sku.js'
     ];
 
     protected static $css = [
-        'vendor/fingerqin/sku/sku.css'
+        'vendor/skus/sku/sku.css'
     ];
 
     public function render()
     {
 
         $this->script = <<< EOF
-window.DemoSku = new FingerQinSKU('{$this->getElementClassSelector()}');
+window.DemoSku = new SkusQinSKU('{$this->getElementClassSelector()}');
 EOF;
         return parent::render();
     }
