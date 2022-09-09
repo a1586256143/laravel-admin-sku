@@ -30,8 +30,10 @@
                     _this.warp.find('.sku_attr_key_val,.sku_edit_warp').show();
                 }
             }
-            _this.processSku()
+            _this.processSku(true)
         });
+        // 默认点击多规格
+        _this.warp.find('.sku_attr_select [data-type=many]').click();
 
         // 绑定属性值添加事件
         _this.warp.find('.sku_attr_key_val').on('click', '.Js_add_attr_val', function () {
@@ -101,7 +103,7 @@
         // 统一价格
         _this.warp.find('.sku_edit_warp thead').on('keyup', 'input.Js_price', function () {
             _this.commonPrice = $(this).val();
-            _this.warp.find('.sku_edit_warp tbody td[data-field="price"] input').val(_this.commonPrice);
+            _this.warp.find('.sku_edit_warp tbody td[data-field="score"] input').val(_this.commonPrice);
             _this.processSku()
         });
 
@@ -150,9 +152,9 @@
 
                 // 生成具体的SKU配置表单
                 _this.attrs = old_val.attr;
-                _this.SKUForm(old_val.sku);
+                _this.SKUForm(old_val.sku , 1);
             } else { // 单规格。
-                $('#goods_price').val(old_val.sku[0].price);
+                $('#goods_price').val(old_val.sku[0].score);
                 $('#goods_stock').val(old_val.sku[0].stock);
             }
         } else {
@@ -182,14 +184,16 @@
                 attr[attr_name] = attr_val;
             }
         });
-
         if (JSON.stringify(_this.attrs) !== JSON.stringify(attr)) {
             _this.attrs = attr;
-            _this.SKUForm()
+            // 1. 获取历史数据，渲染数据，
+            let old_val = _this.warp.find('.Js_sku_input').val();
+            old_val = JSON.parse(old_val);
+            _this.SKUForm(old_val.sku)
         }
     };
 
-    // 生成具体的SKU配置表单
+    // 生成具体的SKU配置表单type=0 第一次加载渲染
     SKU.prototype.SKUForm = function (default_sku) {
         let _this = this;
         let attr_names = Object.keys(_this.attrs);
@@ -202,33 +206,32 @@
             attr_names.forEach(function (attr_name) {
                 thead_html += '<th>' + attr_name + '</th>'
             });
-            thead_html += '<th style="width: 100px">价格(分) <input value="' + _this.commonPrice + '" type="text" style="width: 50px" class="Js_price"></th>';
+            thead_html += '<th style="width: 100px">积分 <input value="' + _this.commonPrice + '" type="text" style="width: 50px" class="Js_price"></th>';
             thead_html += '<th style="width: 100px">库存 <input value="' + _this.commonStock + '" type="text" style="width: 50px" class="Js_stock"></th>';
             thead_html += '</tr>';
             _this.warp.find('.sku_edit_warp thead').html(thead_html);
 
             // 求笛卡尔积
             let cartesianProductOf = (function () {
-                    return Array.prototype.reduce.call(arguments, function (a, b) {
-                        var ret = [];
-                        a.forEach(function (a) {
-                            b.forEach(function (b) {
-                                ret.push(a.concat([b]));
-                            });
+                return Array.prototype.reduce.call(arguments, function (a, b) {
+                    var ret = [];
+                    a.forEach(function (a) {
+                        b.forEach(function (b) {
+                            ret.push(a.concat([b]));
                         });
-                        return ret;
-                    }, [[]]);
-                })(...Object.values(_this.attrs));
-
+                    });
+                    return ret;
+                }, [[]]);
+            })(...Object.values(_this.attrs));
             // 根据计算的笛卡尔积渲染tbody
             let tbody_html = '';
             cartesianProductOf.forEach(function (sku_item) {
-                tbody_html += '<tr>';
+                tbody_html += '<tr data-id="' + sku_item.join('_') + '">';
                 sku_item.forEach(function (attr_val, index) {
                     let attr_name = attr_names[index];
                     tbody_html += '<td data-field="' + attr_name + '">' + attr_val + '</td>';
                 });
-                tbody_html += '<td data-field="price"><input value="' + _this.commonPrice + '" type="text" class="form-control"></td>';
+                tbody_html += '<td data-field="score"><input value="' + _this.commonPrice + '" type="text" class="form-control"></td>';
                 tbody_html += '<td data-field="stock"><input value="' + _this.commonStock + '" type="text" class="form-control"></td>';
                 tbody_html += '</tr>'
             });
@@ -237,11 +240,16 @@
             if(default_sku) {
                 // 填充数据
                 default_sku.forEach(function(item_sku, index) {
-                    let tr = _this.warp.find('.sku_edit_warp tbody tr').eq(index);
+                    let tmpItem = Object.assign({} , item_sku);
+                    delete tmpItem.score;
+                    delete tmpItem.stock;
+                    // 通过 属性名_属性值来查找
+                    let keys = Object.values(tmpItem);
+                    let tr = _this.warp.find('.sku_edit_warp tbody tr[data-id=' + keys.join('_') + ']');
                     Object.keys(item_sku).forEach(function(field) {
                         let input = tr.find('td[data-field="'+field+'"] input');
                         if(input.length) {
-                            input.val(item_sku[field]);
+                            input.val(item_sku[field]).attr('value' , item_sku[field]);
                         }
                     })
                 });
@@ -251,7 +259,7 @@
     };
 
     // 处理最终SKU数据，并写入input
-    SKU.prototype.processSku = function () {
+    SKU.prototype.processSku = function (init = false) {
         let _this = this;
         let sku_json = {};
         sku_json.type = _this.warp.find('.sku_attr_select .btn.btn-success').attr('data-type');
@@ -279,10 +287,14 @@
             let singleGoodsPrice = $('#goods_price').val(); // 单规格商品价格。
             let singleGoodsStock = $('#goods_stock').val(); // 单规格商品库存。
             let sku = [];
-            sku.push({"price":singleGoodsPrice, "stock":singleGoodsStock})
+            sku.push({"score":singleGoodsPrice, "stock":singleGoodsStock})
             sku_json.sku = sku;
             sku_json.attr = [];
         }
+        if(init === true){
+            return;
+        }
+        // 不是初始化方式，则需要重新布局
         _this.warp.find('.Js_sku_input').val(JSON.stringify(sku_json));
     };
 

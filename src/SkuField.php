@@ -20,9 +20,8 @@ class SkuField extends Field
     {
 
         $this->script = <<< EOF
-window.DemoSku = new FingerQinSKU('{$this->getElementClassSelector()}')
+window.DemoSku = new FingerQinSKU('{$this->getElementClassSelector()}');
 EOF;
         return parent::render();
     }
-
 }
